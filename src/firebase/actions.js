@@ -31,3 +31,10 @@ export const getUser = () => {
     .doc(firebase.auth().currentUser.uid)
     .get((result) => result)
 }
+
+export const uploadImage = (imageBlob) => {
+  return firebase.storage()
+    .ref()
+    .child(`post/${firebase.auth().currentUser.uid}/${Math.random.toString(36)}`)
+    .put(imageBlob)
+}

@@ -13,7 +13,7 @@ const RegisterScreen = ({ navigation }) => {
   }
 
   return (
-    <View>
+    <View style={{ flex: 1, justifyContent: 'center' }}>
       <TextInput placeholder="name" id="name" value={name} onChangeText={(name) => setName(name)} />
       <TextInput placeholder="email" id="email" value={email} onChangeText={(email) => setEmail(email)} />
       <TextInput placeholder="password" id="password" secureTextEntry={true} value={password} onChangeText={(password) => setPassword(password)} />

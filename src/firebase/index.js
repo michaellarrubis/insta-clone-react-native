@@ -1,4 +1,5 @@
 import firebase from 'firebase'
+
 import {
   FIREBASE_API_KEY,
   FIREBASE_AUTH_DOMAIN,
