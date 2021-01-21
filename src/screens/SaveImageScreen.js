@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react'
 import { View, TextInput, Image, Button } from 'react-native'
 
-import { uploadImage } from '../firebase/actions'
+import { uploadImage, savePostData } from '../firebase/actions'
 
-const SaveImage = (props) => {
+const SaveImage = ({ route, navigation }) => {
   const [imageProp, setImageProp] = useState(null)
-  const [image, setImage] = useState(null)
+  const [imageUrl, setImageUrl] = useState(null)
   const [caption, setCaption] = useState('')
 
   useEffect(() => {
-    if (props.route.params?.image) {
-      setImageProp(props.route.params.image)
+    if (route.params?.image) {
+      setImageProp(route.params.image)
     }
   }, [])
 
-  const handleUploadImage = async () => {
+  const handleSavePost = async () => {
     const response = await fetch(imageProp)
     const imageBlob = await response.blob()
     let taskUpload = uploadImage(imageBlob)
@@ -25,8 +25,12 @@ const SaveImage = (props) => {
 
     const taskCompleted = () => {
       taskUpload.snapshot.ref.getDownloadURL()
-        .then((snapshot) => {
+        .then(async (snapshot) => {
           console.log(`completed: ${snapshot}`)
+          await savePostData(snapshot, caption)
+            .then(() => {
+              navigation.popToTop()
+            })
         })
     }
 
@@ -35,10 +39,6 @@ const SaveImage = (props) => {
     }
 
     taskUpload.on("status: ", taskProgress, taskError, taskCompleted)
-  }
-
-  const handleSavePost = () => {
-    handleUploadImage()
   }
 
   return (

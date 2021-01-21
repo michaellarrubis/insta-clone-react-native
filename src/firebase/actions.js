@@ -35,6 +35,27 @@ export const getUser = () => {
 export const uploadImage = (imageBlob) => {
   return firebase.storage()
     .ref()
-    .child(`post/${firebase.auth().currentUser.uid}/${Math.random.toString(36)}`)
+    .child(`post/${firebase.auth().currentUser.uid}/${Math.random().toString(36)}`)
     .put(imageBlob)
+}
+
+export const savePostData = (imageUri, caption) => {
+  return firebase.firestore()
+    .collection("posts")
+    .doc(firebase.auth().currentUser.uid)
+    .collection("userPosts")
+    .add({
+      imageUri,
+      caption,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    })
+}
+
+export const getPosts = () => {
+  return firebase.firestore()
+    .collection("posts")
+    .doc(firebase.auth().currentUser.uid)
+    .collection("userPosts")
+    .orderBy("createdAt", "asc")
+    .get((result) => result)
 }

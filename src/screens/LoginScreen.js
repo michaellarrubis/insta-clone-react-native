@@ -2,14 +2,19 @@ import React, { useState } from 'react'
 import { View, Button, TextInput } from 'react-native'
 
 import { login } from '../firebase/actions'
+import { useUser } from '../hooks/useUser'
 
 const LoginScreen = ({ navigation }) => {
+  const { _getUser } = useUser()
+
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
   const handleLogin = async () => {
     const result = await login(email, password)
-    console.log(result)
+    if (result) {
+      _getUser()
+    }
   }
 
   return (
