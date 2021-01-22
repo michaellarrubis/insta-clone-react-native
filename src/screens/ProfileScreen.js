@@ -4,9 +4,23 @@ import { StyleSheet, View, Text, FlatList, Image } from 'react-native'
 import { useUser } from '../hooks/useUser'
 import { usePost } from '../hooks/usePost'
 
-const ProfileScreen = ({ navigation }) => {
+import { getCurrentUserId, getUserById, getPostsByUserId } from '../firebase/actions'
+
+const ProfileScreen = ({ route, navigation }) => {
   const { currentUser } = useUser()
   const { posts, _getPosts } = usePost()
+  const [userPosts, setUserPosts] = useState([])
+  const [user, setUser] = useState(null)
+
+  useEffect(() => {
+    if (route.params?.uid === getCurrentUserId().uid) {
+      setUser(currentUser)
+      setUserPosts(posts)
+    } else {
+      handleGetUserById(route.params?.uid)
+      handleGetPostsByUserId(route.params?.uid)
+    }
+  }, [])
 
   useEffect(() => {
     if (!posts || posts.length === 0) {
@@ -14,11 +28,31 @@ const ProfileScreen = ({ navigation }) => {
     }
   }, [posts])
 
+  const handleGetUserById = async (uid) => {
+    const user = await getUserById(uid)
+    if (user.exists) {
+      setUser(user.data())
+    }
+  }
+
+  const handleGetPostsByUserId = async (uid) => {
+    const result = await getPostsByUserId(uid)
+    const posts = result.docs.map((doc) => {
+      let data = doc.data()
+      let id = doc.id
+      return { id, ...data }
+    })
+    setUserPosts(posts)
+  }
+
+  if (user === null) {
+    return <View />
+  }
   return (
     <View style={styles.container}>
       <View style={styles.containerInfo}>
-        <Text>Profile: {currentUser.name}</Text>
-        <Text>Profile: {currentUser.email}</Text>
+        <Text>Profile: {user.name}</Text>
+        <Text>Email: {user.email}</Text>
       </View>
       <View style={styles.containerGallery}>
         <FlatList
@@ -42,7 +76,6 @@ const ProfileScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 40
   },
   containerInfo: {
     margin: 20

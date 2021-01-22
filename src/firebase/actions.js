@@ -13,6 +13,9 @@ export const register = (name, email, password) => {
 export const logout = () => {
   return firebase.auth().signOut()
 }
+export const getCurrentUserId = () => {
+  return firebase.auth().currentUser.uid
+}
 
 //firestore
 const addUser = (name, email) => {
@@ -25,10 +28,10 @@ const addUser = (name, email) => {
     })
 }
 
-export const getUser = () => {
+export const getUserById = (uid) => {
   return firebase.firestore()
     .collection("users")
-    .doc(firebase.auth().currentUser.uid)
+    .doc(uid)
     .get((result) => result)
 }
 
@@ -51,11 +54,18 @@ export const savePostData = (imageUri, caption) => {
     })
 }
 
-export const getPosts = () => {
+export const getPostsByUserId = () => {
   return firebase.firestore()
     .collection("posts")
     .doc(firebase.auth().currentUser.uid)
     .collection("userPosts")
     .orderBy("createdAt", "asc")
+    .get((result) => result)
+}
+
+export const getUsersByName = (name) => {
+  return firebase.firestore()
+    .collection("users")
+    .where("name", ">=", name)
     .get((result) => result)
 }
