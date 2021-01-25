@@ -1,18 +1,25 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, View, Text, FlatList, Image } from 'react-native'
+import { StyleSheet, View, Text, FlatList, Image, Button } from 'react-native'
 
 import { useUser } from '../hooks/useUser'
 import { usePost } from '../hooks/usePost'
 
-import { getCurrentUserId, getUserById, getPostsByUserId } from '../firebase/actions'
+import { getCurrentUserId, getUserById, getPostsByUserId, followAction } from '../firebase/actions'
 
 const ProfileScreen = ({ route, navigation }) => {
-  const { currentUser } = useUser()
+  const { currentUser, following, _getUserFollowing } = useUser()
   const { posts, _getPosts } = usePost()
   const [userPosts, setUserPosts] = useState([])
   const [user, setUser] = useState(null)
+  const [follow, setFollow] = useState(false)
 
   useEffect(() => {
+    // getting posts
+    if (!posts || posts.length === 0) {
+      _getPosts()
+    }
+
+    // checking user
     if (route.params?.uid === getCurrentUserId().uid) {
       setUser(currentUser)
       setUserPosts(posts)
@@ -20,13 +27,18 @@ const ProfileScreen = ({ route, navigation }) => {
       handleGetUserById(route.params?.uid)
       handleGetPostsByUserId(route.params?.uid)
     }
-  }, [])
 
-  useEffect(() => {
-    if (!posts || posts.length === 0) {
-      _getPosts()
+    // following logic
+    if (!following || following.length === 0) {
+      _getUserFollowing()
     }
-  }, [posts])
+
+    if (following.indexOf(route.params.uid) > -1) {
+      setFollow(true)
+    } else {
+      setFollow(false)
+    }
+  }, [route.params.uid, following, posts])
 
   const handleGetUserById = async (uid) => {
     const user = await getUserById(uid)
@@ -45,6 +57,13 @@ const ProfileScreen = ({ route, navigation }) => {
     setUserPosts(posts)
   }
 
+  const handleUnFollow = async () => {
+    await followAction(route.params.uid, 'unfollow')
+  }
+  const handleFollow = async () => {
+    await followAction(route.params.uid, 'follow')
+  }
+
   if (user === null) {
     return <View />
   }
@@ -53,12 +72,24 @@ const ProfileScreen = ({ route, navigation }) => {
       <View style={styles.containerInfo}>
         <Text>Profile: {user.name}</Text>
         <Text>Email: {user.email}</Text>
+        {route.params.uid !== getCurrentUserId().uid
+          ? (
+            <View>
+              {
+                follow ? (
+                  <Button title="Following" onPress={() => handleUnFollow()} />
+                ) : (
+                    <Button title="Follow" onPress={() => handleFollow()} />
+                  )
+              }
+            </View>
+          ) : null}
       </View>
       <View style={styles.containerGallery}>
         <FlatList
           numColumns={3}
           horizontal={false}
-          data={posts}
+          data={userPosts}
           renderItem={({ item }) => (
             <View style={styles.containerImage}>
               <Image
@@ -76,6 +107,7 @@ const ProfileScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginTop: 40,
   },
   containerInfo: {
     margin: 20

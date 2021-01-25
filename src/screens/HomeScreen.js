@@ -16,13 +16,21 @@ const Tab = createMaterialBottomTabNavigator()
 const MainStack = () => {
 
   return (
-    <Tab.Navigator initialRouteName="Search" labeled={false}>
+    <Tab.Navigator initialRouteName="Feed" labeled={false}>
+      <Tab.Screen
+        name="Feed"
+        component={FeedScreen}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="home" color={color} size={26} />
+          )
+        }} />
       <Tab.Screen
         name="Search"
         component={SearchScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="home" color={color} size={26} />
+            <MaterialCommunityIcons name="magnify" color={color} size={26} />
           )
         }} />
       <Tab.Screen

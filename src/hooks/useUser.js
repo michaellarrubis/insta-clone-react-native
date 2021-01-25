@@ -1,16 +1,22 @@
 import { useSelector, useDispatch } from 'react-redux'
-import { getUserAction } from '../redux/modules/user/userActions'
+import { getUserAction, getUserFollowingAction } from '../redux/modules/user/userActions'
 
 export const useUser = () => {
   const dispatch = useDispatch()
-  const { currentUser } = useSelector((state) => state.user)
+  const { currentUser, following } = useSelector((state) => state.user)
 
   const _getUser = () => {
     return dispatch(getUserAction())
   }
+
+  const _getUserFollowing = () => {
+    return dispatch(getUserFollowingAction())
+  }
   return {
     currentUser,
+    following,
 
-    _getUser
+    _getUser,
+    _getUserFollowing
   }
 }

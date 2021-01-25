@@ -1,7 +1,7 @@
 import { getPostsByUserId, getCurrentUserId } from '../../../firebase/actions'
 import { GET_POSTS } from './postTypes'
 
-export function getPostAction() {
+export function getPostsAction() {
   return (async (dispatch) => {
     const result = await getPostsByUserId(getCurrentUserId())
     const posts = result.docs.map((doc) => {

@@ -69,3 +69,29 @@ export const getUsersByName = (name) => {
     .where("name", ">=", name)
     .get((result) => result)
 }
+
+export const getUserFollowingByUserId = () => {
+  return firebase.firestore()
+    .collection("following")
+    .doc(firebase.auth().currentUser.uid)
+    .collection("userFollowing")
+    .get((result) => result)
+}
+
+export const followAction = (userUid, action) => {
+  if (action === 'follow') {
+    return firebase.firestore()
+      .collection("following")
+      .doc(firebase.auth().currentUser.uid)
+      .collection("userFollowing")
+      .doc(userUid)
+      .set({})
+  } else {
+    return firebase.firestore()
+      .collection("following")
+      .doc(firebase.auth().currentUser.uid)
+      .collection("userFollowing")
+      .doc(userUid)
+      .delete()
+  }
+}

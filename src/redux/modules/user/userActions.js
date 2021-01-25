@@ -1,5 +1,5 @@
-import { getUserById, getCurrentUserId } from '../../../firebase/actions'
-import { USER_STATE_CHANGE } from './userTypes'
+import { getUserById, getCurrentUserId, getUserFollowingByUserId } from '../../../firebase/actions'
+import { USER_STATE_CHANGE, USER_FOLLOWING } from './userTypes'
 
 export function getUserAction() {
   return (async (dispatch) => {
@@ -9,5 +9,15 @@ export function getUserAction() {
     } else {
       console.log('doesnt exists')
     }
+  })
+}
+
+export function getUserFollowingAction() {
+  return (async (dispatch) => {
+    const result = await getUserFollowingByUserId(getCurrentUserId())
+    const following = result.docs.map((doc) => {
+      return doc.id
+    })
+    dispatch({ type: USER_FOLLOWING, following })
   })
 }

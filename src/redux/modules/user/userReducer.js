@@ -1,7 +1,10 @@
-import { USER_STATE_CHANGE } from './userTypes'
+import { USER_STATE_CHANGE, USER_FOLLOWING, USERS_DATA, USERS_POSTS } from './userTypes'
 
 const initialState = {
-  currentUser: null
+  currentUser: null,
+  following: [],
+  users: [],
+  userLoaded: 0
 }
 
 export default function userReducer(state = initialState, action) {
@@ -10,6 +13,16 @@ export default function userReducer(state = initialState, action) {
       return {
         ...state,
         currentUser: action.currentUser
+      }
+    case USER_FOLLOWING:
+      return {
+        ...state,
+        following: action.following
+      }
+    case USERS_DATA:
+      return {
+        ...state,
+        users: [...state.users, action.user]
       }
     default:
       return state

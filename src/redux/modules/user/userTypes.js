@@ -1,1 +1,4 @@
 export const USER_STATE_CHANGE = 'USER_STATE_CHANGE'
+export const USER_FOLLOWING = 'USER_FOLLOWING'
+export const USERS_DATA = 'USERS_DATA'
+export const USERS_POSTS = 'USERS_POSTS'

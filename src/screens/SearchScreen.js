@@ -16,7 +16,7 @@ const SearchScreen = ({ navigation }) => {
     setUsers(users)
   }
   return (
-    <View>
+    <View style={{ marginTop: 50 }}>
       <TextInput placeholder="Type here ..." onChangeText={(name) => handleGetUsers(name)} />
       <FlatList
         numColumns={1}
